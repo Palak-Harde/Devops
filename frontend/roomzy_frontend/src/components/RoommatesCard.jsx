@@ -1,12 +1,11 @@
-// RoommatesCard.jsx
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { MapPin, Home, DollarSign, User, Send } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function RoommatesCard({ roommates }) {
   const { user } = useContext(AuthContext);
-
-  // ⭐ Remove the logged-in user from list
+ 
+  // Remove logged-in user from list
   const filteredRoommates = roommates.filter(
     (r) => r.email !== user?.email
   );
@@ -49,13 +48,27 @@ export default function RoommatesCard({ roommates }) {
             <span>{roommate.place}</span>
           </div>
 
-          {/* ⭐ Send Message Button */}
+          {/* Message Input */}
+          {activeUserId === roommate._id && (
+            <textarea
+              className="w-full border rounded-lg p-2 text-sm"
+              placeholder="Type your message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          )}
+
+          {/* Send Message Button */}
           <button
             className="w-full mt-3 flex items-center justify-center gap-2 bg-green-500 text-white py-2 rounded-xl shadow-md hover:bg-green-600 active:scale-95 transition-all"
-            onClick={() => alert(`Sending message to ${roommate.name}`)}
+            onClick={() =>
+              activeUserId === roommate._id
+                ? sendMessage(roommate._id)
+                : setActiveUserId(roommate._id)
+            }
           >
             <Send className="w-4 h-4" />
-            Send Message
+            {activeUserId === roommate._id ? "Send" : "Message"}
           </button>
         </div>
       ))}
